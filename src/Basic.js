@@ -16,6 +16,11 @@ import {
   updateDoc
 } from "firebase/firestore";
 
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 const Basic = () => {
 
   const [students, setStudents] = useState([]);
@@ -107,6 +112,59 @@ const Basic = () => {
     setAge(student.age);
 
     setEditId(student.id);
+  };
+
+  
+  const downloadExcel = () => {
+
+    const data = students.map((s) => ({
+      Name: s.name,
+      Email: s.email,
+      Phone: s.phone,
+      Class: s.standard,
+      Section: s.section,
+      Age: s.age
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array"
+    });
+
+    const file = new Blob([excelBuffer], {
+      type: "application/octet-stream"
+    });
+
+    saveAs(file, "students.xlsx");
+  };
+
+  
+  const downloadPDF = () => {
+
+    const doc = new jsPDF();
+
+    const columns = ["Name", "Email", "Phone", "Class", "Section", "Age"];
+
+    const rows = students.map((s) => [
+      s.name,
+      s.email,
+      s.phone,
+      s.standard,
+      s.section,
+      s.age
+    ]);
+
+    autoTable(doc, {
+      head: [columns],
+      body: rows
+    });
+
+    doc.save("students.pdf");
   };
 
   const columns = [
@@ -206,12 +264,32 @@ const Basic = () => {
 
       </div>
 
-      <button
-        className="bg-green-600 text-white px-6 py-2 rounded mb-8"
-        onClick={addStudent}
-      >
-        Save Student
-      </button>
+    
+
+      <div className="flex gap-4 mb-8">
+
+        <button
+          className="bg-green-600 text-white px-6 py-2 rounded"
+          onClick={addStudent}
+        >
+          Save Student
+        </button>
+
+        <button
+          onClick={downloadExcel}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Download Excel
+        </button>
+
+        <button
+          onClick={downloadPDF}
+          className="bg-red-600 text-white px-4 py-2 rounded"
+        >
+          Download PDF
+        </button>
+
+      </div>
 
       <div className="bg-white shadow-lg rounded">
 
