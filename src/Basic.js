@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   flexRender,
   getSortedRowModel,
-  getFilteredRowModel  // ← ये add करो
+  getFilteredRowModel 
 } from "@tanstack/react-table";
 
 import { db } from "./Firebase";
@@ -207,11 +207,11 @@ const Basic = () => {
 const table = useReactTable({
   data: students,
   columns: columns,
-  state: { globalFilter },            // ← add
-  onGlobalFilterChange: setGlobalFilter,  // ← add
+  state: { globalFilter },           
+  onGlobalFilterChange: setGlobalFilter, 
   getCoreRowModel: getCoreRowModel(),
   getSortedRowModel: getSortedRowModel(),
-  getFilteredRowModel: getFilteredRowModel() // ← add
+  getFilteredRowModel: getFilteredRowModel() 
 });
 
   return (
@@ -268,7 +268,7 @@ const table = useReactTable({
 
       </div>
 
-      {/* Save + Download Buttons */}
+    
 
       <div className="flex gap-4 mb-8">
 
