@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
+import { 
   useReactTable,
   getCoreRowModel,
   flexRender,
-  getSortedRowModel
+  getSortedRowModel,
+  getFilteredRowModel  // ← ये add करो
 } from "@tanstack/react-table";
 
 import { db } from "./Firebase";
@@ -33,6 +34,7 @@ const Basic = () => {
   const [age, setAge] = useState("");
 
   const [editId, setEditId] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const getStudents = async () => {
 
@@ -202,13 +204,15 @@ const Basic = () => {
     }
 
   ];
-
-  const table = useReactTable({
-    data: students,
-    columns: columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel()
-  });
+const table = useReactTable({
+  data: students,
+  columns: columns,
+  state: { globalFilter },            // ← add
+  onGlobalFilterChange: setGlobalFilter,  // ← add
+  getCoreRowModel: getCoreRowModel(),
+  getSortedRowModel: getSortedRowModel(),
+  getFilteredRowModel: getFilteredRowModel() // ← add
+});
 
   return (
 
@@ -264,7 +268,7 @@ const Basic = () => {
 
       </div>
 
-    
+      {/* Save + Download Buttons */}
 
       <div className="flex gap-4 mb-8">
 
@@ -288,7 +292,13 @@ const Basic = () => {
         >
           Download PDF
         </button>
-
+<input
+  type="text"
+  placeholder="Search students..."
+  value={globalFilter ?? ""}
+  onChange={(e) => setGlobalFilter(e.target.value)}
+  className="border p-2 mb-4 w-full"
+/>
       </div>
 
       <div className="bg-white shadow-lg rounded">
